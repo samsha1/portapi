@@ -12,6 +12,24 @@ use App\Portfolio;
  */
 class PortfolioController extends Controller
 {
+
+	public function index(){
+		$portfolio= Portfolio::all();
+		foreach ($portfolio as $value) {
+			$value->view_portfolio=[
+				'href'=>'api/v1/portfolio/'.$value->id,
+				'method'=>'GET'
+			];
+		}
+
+		$response=[
+			'message'=>"List of Samrat Portfolio",
+			'portfolios'=>$portfolio
+
+		];
+
+		return response()->json($response,200);
+	}
 	
 	public function store(Request $request){
 
@@ -23,7 +41,12 @@ class PortfolioController extends Controller
 
 		]);
 		$response = Portfolio::create($request->all());
-		return response()->json($response,200);
+		$message=[
+			'title'=>$response->title,
+			'message'=>"Portfolio Successfully Added",
+			'portfolio_id'=>$response->id
+		];
+		return response()->json($message,200);
 
 		$response=[
 			'message'=>"Error While Creating Portfolio"
@@ -31,6 +54,32 @@ class PortfolioController extends Controller
 
 		return response()->json($response,404);
 
+
+	}
+
+	public function destroy($id){
+		$find=Portfolio::find($id);
+
+		if(!$find){
+			return response()->	json(['message'=>'Portfolio Not Found'],401);
+		}
+
+		$find->delete();
+
+		$message=[
+			'message'=>"Portfolio Successfully Deleted",
+			'create'=>[
+				'href'=>'api/v1/meeting',
+				'method'=>'POST',
+				'params'=>'title,description,url,language'
+
+			]
+
+		];
+
+		return response()->json($message,200);
+
+		return response()->	json(['message'=>'Portfolio Not Found'],401);
 
 	}
 }

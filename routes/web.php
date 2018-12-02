@@ -28,6 +28,10 @@ $router->post('portfolio',[
 	'uses'=>'PortfolioController@store'
 ]);
 
+$router->get('portfolio','PortfolioController@index');
+
+$router->delete('portfolio/{id}','PortfolioController@destroy');
+
 $router->get('/testing', function() {
 	return "hello lumen";
 });
